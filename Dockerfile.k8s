@@ -19,7 +19,10 @@ RUN npm ci
 COPY spago.yaml ./
 COPY src/ ./src/
 COPY dev/ ./dev/
-COPY ../aftok.com/src/assets ./dev/assets
+COPY aftok.com/ ./aftok.com/
+
+# Create assets symlink
+RUN ln -sf ../aftok.com/src/assets ./dev/assets
 
 # Build the application
 RUN npm run build-parcel
