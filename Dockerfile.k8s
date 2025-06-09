@@ -22,7 +22,8 @@ COPY dev/ ./dev/
 COPY aftok.com/ ./aftok.com/
 
 # Create assets symlink
-RUN ln -sf ../aftok.com/src/assets ./dev/assets
+RUN mkdir -p dist
+RUN ln -sf ../aftok.com/src/assets ./dist/assets
 
 # Build the application
 RUN npm run build-parcel
