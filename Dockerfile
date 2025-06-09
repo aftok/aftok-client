@@ -16,23 +16,22 @@ RUN update-ca-certificates
 RUN mkdir -p /opt/aftok/client
 WORKDIR /opt/aftok/client
 
-ADD ./client/package.json /opt/aftok/client/package.json
+ADD ./package.json /opt/aftok/client/package.json
+ADD ./package-lock.json /opt/aftok/client/package-lock.json
 
-RUN npm install
+RUN npm ci
 ENV PATH="./node_modules/.bin:${PATH}"
 
-# Add static assets
-ADD ./aftok.com/src/assets /opt/aftok/aftok.com/src/assets
-ADD ./client/dev /opt/aftok/client/dev
-RUN mkdir -p /opt/aftok/client/prod && \
-    ln -s /opt/aftok/aftok.com/src/assets /opt/aftok/client/prod/assets
+# Add static assets via submodule
+ADD ./aftok.com /opt/aftok/client/aftok.com
+ADD ./dev /opt/aftok/client/dev
+RUN ln -sf ../aftok.com/src/assets /opt/aftok/client/dev/assets
 
 # Add purescript build config & sources
-ADD ./client/spago.dhall /opt/aftok/client/spago.dhall
-ADD ./client/packages.dhall /opt/aftok/client/packages.dhall
-ADD ./client/src /opt/aftok/client/src
+ADD ./spago.yaml /opt/aftok/client/spago.yaml
+ADD ./src /opt/aftok/client/src
 
-RUN npm run build-prod
+RUN npm run build-parcel
 
 # Add dist-volume directory for use with docker-compose sharing
 # of client executables via volumes.
